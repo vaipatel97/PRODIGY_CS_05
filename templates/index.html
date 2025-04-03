@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packet Sniffer</title>
+    <script>
+        function startCapture() {
+            fetch('/start', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => alert(data.status));
+        }
+
+        function stopCapture() {
+            fetch('/stop', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => alert(data.status));
+        }
+
+        function fetchPackets() {
+            fetch('/packets')
+                .then(response => response.json())
+                .then(data => {
+                    let output = '<h3>Captured Packets:</h3><table border="1"><tr><th>Source</th><th>Destination</th><th>Protocol</th><th>Payload</th></tr>';
+                    data.forEach(packet => {
+                        output += `<tr>
+                            <td>${packet.source}</td>
+                            <td>${packet.destination}</td>
+                            <td>${packet.protocol}</td>
+                            <td>${packet.payload}</td>
+                        </tr>`;
+                    });
+                    output += '</table>';
+                    document.getElementById('packets').innerHTML = output;
+                });
+        }
+
+        setInterval(fetchPackets, 3000);
+    </script>
+</head>
+<body>
+    <h1>Packet Sniffer</h1>
+    <button onclick="startCapture()">Start Capture</button>
+    <button onclick="stopCapture()">Stop Capture</button>
+    <div id="packets"></div>
+</body>
+</html>
